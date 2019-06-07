@@ -2,7 +2,9 @@
 
 import { app, protocol, BrowserWindow, dialog } from 'electron';
 
-const fs = require('fs');
+// import fs from 'fs'; // node.js types: a replacement for a require
+// import fs = require('fs');
+import * as fs from 'fs';
 
 import {
   createProtocol,
@@ -29,18 +31,20 @@ const getFilesInFolders = () => {
     ],
   });
 
-  if (!files) return;
+  if (!files) { return; }
 
   const file = files[0];
 
   const content = fs.readFileSync(file).toString();
 
+  // tslint:disable-next-line:no-console
   console.log(content);
 };
 
 function createWindow() {
   // Create the browser window.
-  win = new BrowserWindow({width: 1280,
+  win = new BrowserWindow({
+    width: 1280,
     height: 800,
     useContentSize: true,
     titleBarStyle: 'hiddenInset',
@@ -49,7 +53,10 @@ function createWindow() {
     fullscreenable: false,
     webPreferences: {
       backgroundThrottling: false,
-    },});
+      nodeIntegration: true,
+    },
+    movable: true,
+  });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
