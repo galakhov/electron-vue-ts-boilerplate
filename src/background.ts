@@ -22,13 +22,13 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 // export
-const getFilesInFolders = () => {
+export const getFilesInFolders = () => {
   const files = dialog.showOpenDialog({
     properties: ["openFile", "multiSelections"],
     buttonLabel: "Select bookmarks",
     title: "Selecting bookmarks",
     filters: [
-      { name: "HTML Files", extensions: ["html", "htm"] }
+      { name: "HTML Files", extensions: ["html", "htm", "txt"] }
       // { name: 'Archive Files', extensions: ['zip', 'rar'] },
     ]
   });
@@ -45,7 +45,7 @@ const getFilesInFolders = () => {
   console.log(content);
 };
 
-function createWindow() {
+const createWindow = () => {
   // Create the browser window.
   win = new BrowserWindow({
     width: 1280,
@@ -55,11 +55,11 @@ function createWindow() {
     show: false,
     frame: false,
     fullscreenable: false,
+    movable: true,
     webPreferences: {
       backgroundThrottling: false,
       nodeIntegration: true
-    },
-    movable: true
+    }
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -71,9 +71,9 @@ function createWindow() {
   } else {
     createProtocol("app");
     // Load the index.html when not in development
-    win.loadURL("app://./index.html");
+    // win.loadURL("app://./index.html");
 
-    getFilesInFolders();
+    // getFilesInFolders();
   }
 
   // to avoid a blank flashing page on start
@@ -86,7 +86,7 @@ function createWindow() {
   win.on("closed", () => {
     win = null;
   });
-}
+};
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {

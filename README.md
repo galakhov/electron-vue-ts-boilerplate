@@ -49,3 +49,7 @@ npm run test:unit
 [Advanced Webpack configuration of VCP electron-builder](https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/configuration.html#webpack-configuration)
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+[TSConfig docs](https://basarat.gitbooks.io/typescript/docs/project/tsconfig.html).
+
+[GIT: changing remotes](https://help.github.com/en/articles/changing-a-remotes-url).

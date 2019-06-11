@@ -31,6 +31,17 @@
             <v-card flat>
               <v-card-text>
                 {{ text }}
+                <v-btn
+                  :loading="loading3"
+                  :disabled="loading3"
+                  color="blue-grey"
+                  class="white--text"
+                  @click="getFilesInFolders()"
+                >
+                  Upload
+                  <v-icon right dark>fas fa-cloud-upload-alt</v-icon>
+                </v-btn>
+
                 <system-information></system-information>
               </v-card-text>
             </v-card>
@@ -42,28 +53,66 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import SystemInformation from "./LandingPage/SystemInformation.vue";
-
+// import { getFilesInFolders } from "../background";
+import { dialog } from "electron";
+import * as fs from "fs";
 // const AppProps = Vue.extend({
 //   props: {
 //     $electron: NodeJS, // .ProcessVersions.string,
 //   }
 // })
 
+const getFilesInFolders = () => {
+  const files = dialog.showOpenDialog({
+    properties: ["openFile", "multiSelections"],
+    buttonLabel: "Select bookmarks",
+    title: "Selecting bookmarks",
+    filters: [
+      { name: "HTML Files", extensions: ["html", "htm", "txt"] }
+      // { name: 'Archive Files', extensions: ['zip', 'rar'] },
+    ]
+  });
+
+  if (!files) {
+    return;
+  }
+
+  const file = files[0];
+
+  const content = fs.readFileSync(file).toString();
+
+  // tslint:disable-next-line:no-console
+  console.log(content);
+};
+
 @Component({
   components: {
     SystemInformation
+  },
+  props: {
+    // getFilesInFolders
   }
 })
 export default class LandingPage extends Vue {
   // @Prop(NodeJS.Process.Versions) electron;
   // $electron = "";
-
+  loading3: boolean = false;
   tab = null;
+  loader = "";
   items = ["web", "shopping", "videos", "images", "news"];
   text =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+
+  @Watch("loader")
+  loaderHandler() {
+    this.loading3 = !this.loading3;
+
+    setTimeout(() => (this.loading3 = false), 3000);
+
+    this.loader = "";
+  }
 
   // open(link: string) {
   //   this.$electron.shell.openExternal(link);
@@ -98,9 +147,46 @@ body {
 main {
   display: flex;
   justify-content: space-between;
+
+  & > div {
+    flex-basis: 100%;
+  }
 }
 
-main > div {
-  flex-basis: 100%;
+.custom-loader {
+  animation: loader 1s infinite;
+  display: flex;
+}
+@-moz-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
