@@ -6,7 +6,7 @@
 npm install
 ```
 
-## If it hangs on extract:app-builder-bin, use the empty cache during installation
+### If it hangs on 'extract:app-builder-bin', use the empty cache during installation
 
 ```
 rm -rf node_modules/
@@ -44,5 +44,7 @@ npm run test:unit
 ```
 
 ### Customize configuration
+
+[Advanced Webpack configuration of VCP electron-builder](https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/configuration.html#webpack-configuration)
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
