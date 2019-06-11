@@ -10,6 +10,13 @@
     "interface-name": false,
     "ordered-imports": false,
     "object-literal-sort-keys": false,
-    "no-consecutive-blank-lines": false
+    "no-consecutive-blank-lines": false,
+    "member-access": false,
+    "trailing-comma": false,
+    "arrow-parens": [2, "as-needed", { "requireForBlockBody": true }],
+    "max-line-length": [
+      true,
+      { "limit": 160, "ignore-pattern": "^import |^export {(.*?)}" }
+    ]
   }
 }

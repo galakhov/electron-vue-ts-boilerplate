@@ -3,6 +3,7 @@
     "target": "esnext",
     "module": "commonjs",
     "strict": true,
+    "noImplicitAny": true,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
@@ -11,24 +12,11 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": [
-      "webpack-env",
-      "jest",
-      "node"
-    ],
+    "types": ["webpack-env", "jest", "node"],
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"]
     },
-    "lib": [
-      "es5",
-      "es6",
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ]
+    "lib": ["es5", "es6", "esnext", "dom", "dom.iterable", "scripthost"]
   },
   "include": [
     "src/**/*.ts",
@@ -37,7 +25,5 @@
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

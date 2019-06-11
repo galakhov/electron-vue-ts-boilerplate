@@ -8,7 +8,7 @@ import * as fs from "fs";
 
 import {
   createProtocol,
-  installVueDevtools,
+  installVueDevtools
 } from "vue-cli-plugin-electron-builder/lib";
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -17,7 +17,9 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 let win: BrowserWindow | null;
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([{scheme: "app", privileges: { secure: true, standard: true } }]);
+protocol.registerSchemesAsPrivileged([
+  { scheme: "app", privileges: { secure: true, standard: true } }
+]);
 
 // export
 const getFilesInFolders = () => {
@@ -26,12 +28,14 @@ const getFilesInFolders = () => {
     buttonLabel: "Select bookmarks",
     title: "Selecting bookmarks",
     filters: [
-      { name: "HTML Files", extensions: ["html", "htm"] },
+      { name: "HTML Files", extensions: ["html", "htm"] }
       // { name: 'Archive Files', extensions: ['zip', 'rar'] },
-    ],
+    ]
   });
 
-  if (!files) { return; }
+  if (!files) {
+    return;
+  }
 
   const file = files[0];
 
@@ -53,9 +57,9 @@ function createWindow() {
     fullscreenable: false,
     webPreferences: {
       backgroundThrottling: false,
-      nodeIntegration: true,
+      nodeIntegration: true
     },
-    movable: true,
+    movable: true
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -120,7 +124,7 @@ app.on("ready", async () => {
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === "win32") {
-    process.on("message", (data) => {
+    process.on("message", data => {
       if (data === "graceful-exit") {
         app.quit();
       }

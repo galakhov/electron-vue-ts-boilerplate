@@ -41,26 +41,34 @@
   </div>
 </template>
 
-<script>
-import SystemInformation from "./LandingPage/SystemInformation";
+<script lang="ts">
+import { Vue, Component, Prop } from "vue-property-decorator";
+import SystemInformation from "./LandingPage/SystemInformation.vue";
 
-export default {
-  name: "landing-page",
-  components: { SystemInformation },
-  methods: {
-    open(link) {
-      this.$electron.shell.openExternal(link);
-    }
-  },
-  data() {
-    return {
-      tab: null,
-      items: ["web", "shopping", "videos", "images", "news"],
-      text:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-    };
+// const AppProps = Vue.extend({
+//   props: {
+//     $electron: NodeJS, // .ProcessVersions.string,
+//   }
+// })
+
+@Component({
+  components: {
+    SystemInformation
   }
-};
+})
+export default class LandingPage extends Vue {
+  // @Prop(NodeJS.Process.Versions) electron;
+  // $electron = "";
+
+  tab = null;
+  items = ["web", "shopping", "videos", "images", "news"];
+  text =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+
+  // open(link: string) {
+  //   this.$electron.shell.openExternal(link);
+  // }
+}
 </script>
 
 <style lang="scss">

@@ -6,10 +6,11 @@
 npm install
 ```
 
-### If it hangs on 'extract:app-builder-bin', use the empty cache during installation
+### If it hangs on 'extract:app-builder-bin', try to install with the temporary cache enabled
 
 ```
 rm -rf node_modules/
+npm cache clean
 npm install --cache /tmp/empty-cache
 ```
 
