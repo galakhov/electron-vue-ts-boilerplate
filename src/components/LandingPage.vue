@@ -42,6 +42,8 @@
                   <v-icon right dark>fas fa-cloud-upload-alt</v-icon>
                 </v-btn>
 
+                <v-btn @click="open('http://google.com')">Open URL</v-btn>
+
                 <system-information></system-information>
               </v-card-text>
             </v-card>
@@ -53,75 +55,65 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from "vue-property-decorator";
-import SystemInformation from "./LandingPage/SystemInformation.vue";
-// import { getFilesInFolders } from "../background";
-import { dialog } from "electron";
-import * as fs from "fs";
-// const AppProps = Vue.extend({
-//   props: {
-//     $electron: NodeJS, // .ProcessVersions.string,
-//   }
-// })
-
-const getFilesInFolders = () => {
-  const files = dialog.showOpenDialog({
-    properties: ["openFile", "multiSelections"],
-    buttonLabel: "Select bookmarks",
-    title: "Selecting bookmarks",
-    filters: [
-      { name: "HTML Files", extensions: ["html", "htm", "txt"] }
-      // { name: 'Archive Files', extensions: ['zip', 'rar'] },
-    ]
-  });
-
-  if (!files) {
-    return;
-  }
-
-  const file = files[0];
-
-  const content = fs.readFileSync(file).toString();
-
-  // tslint:disable-next-line:no-console
-  console.log(content);
-};
+import * as fs from 'fs';
+import { remote } from 'electron';
+// import path from 'path';
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+import SystemInformation from './LandingPage/SystemInformation.vue';
 
 @Component({
   components: {
-    SystemInformation
+    SystemInformation,
   },
-  props: {
-    // getFilesInFolders
-  }
 })
 export default class LandingPage extends Vue {
-  // @Prop(NodeJS.Process.Versions) electron;
-  // $electron = "";
   loading3: boolean = false;
   tab = null;
-  loader = "";
-  items = ["web", "shopping", "videos", "images", "news"];
+  loader = '';
+  items = ['web', 'shopping', 'videos', 'images', 'news'];
   text =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
 
-  @Watch("loader")
+  @Watch('loader')
   loaderHandler() {
     this.loading3 = !this.loading3;
 
     setTimeout(() => (this.loading3 = false), 3000);
 
-    this.loader = "";
+    this.loader = '';
   }
 
-  // open(link: string) {
-  //   this.$electron.shell.openExternal(link);
-  // }
+  getFilesInFolders() {
+    const files = remote.dialog.showOpenDialog({
+      properties: ['openFile', 'multiSelections'],
+      buttonLabel: 'Select bookmarks',
+      title: 'Selecting bookmarks',
+      filters: [
+        { name: 'HTML Files', extensions: ['html', 'htm', 'txt'] },
+        // { name: 'Archive Files', extensions: ['zip', 'rar'] },
+      ],
+    });
+
+    if (!files) {
+      return;
+    }
+
+    const file = files[0];
+
+    const content = fs.readFileSync(file).toString();
+
+    // tslint:disable-next-line:no-console
+    console.log(content);
+  }
+
+  open(link: string) {
+    remote.shell.openExternal(link); // to open something in a browser
+  }
 }
 </script>
 
 <style lang="scss">
-@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro");
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 
 * {
   box-sizing: border-box;
@@ -130,7 +122,7 @@ export default class LandingPage extends Vue {
 }
 
 body {
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 #wrapper {

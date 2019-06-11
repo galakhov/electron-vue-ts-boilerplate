@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Provide } from "vue-property-decorator";
+import { Vue, Component, Prop, Provide } from 'vue-property-decorator';
 
 // Reactive
 // const AppProps = Vue.extend({
@@ -48,8 +48,8 @@ import { Vue, Component, Prop, Provide } from "vue-property-decorator";
     path: String,
     vue: String,
     platform: String,
-    node: String
-  }
+    node: String,
+  },
 })
 export default class SystemInformation extends Vue {
   // @Inject() readonly electron!: string;
@@ -57,19 +57,19 @@ export default class SystemInformation extends Vue {
     return process.versions.node;
   }
   getPlatform(): string {
-    return require("os").platform() as string;
+    return require('os').platform() as string;
   }
   getVueVersion(): string {
-    return require("vue/package.json").version as string;
+    return require('vue/package.json').version as string;
   }
   getElectronVersion(): string {
     return process.versions.electron;
   }
   getName(): string {
-    return this.$route ? (this.$route.name as string) : "name";
+    return this.$route ? (this.$route.name as string) : 'name';
   }
   getPath(): string {
-    return this.$route ? this.$route.path : "path";
+    return this.$route ? this.$route.path : 'path';
   }
 }
 // export default {

@@ -1,33 +1,34 @@
 <template>
   <div class="home">
-    <!--<img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>-->
     <LandingPage/>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { Route, RawLocation, Next } from "vue-router";
+import { Component, Vue } from 'vue-property-decorator';
+import { Route, RawLocation, Next } from 'vue-router';
 // @ is an alias to /src
-import LandingPage from "@/components/LandingPage.vue";
+import LandingPage from '@/components/LandingPage.vue';
 
 @Component({
   components: {
-    LandingPage
+    LandingPage,
   },
   props: {
-    $route: String
-  }
+    $route: String,
+  },
 })
 export default class Home extends Vue {
   beforeRouteEnter(to: Route, from: Route, next: Next<Home>) {
     // called before the route that renders this component is confirmed.
     // does NOT have access to `this` component instance,
     // because it has not been created yet when this guard is called!
-    console.log("going from: ", from.name);
-    console.log("going to: ", to.name);
-    console.log("path: ", to.path);
+    // tslint:disable-next-line:no-console
+    console.log('going from: ', from.name);
+    // tslint:disable-next-line:no-console
+    console.log('going to: ', to.name);
+    // tslint:disable-next-line:no-console
+    console.log('path: ', to.path);
     next(vm => {
       // vm.providerMovies = []; /// <= Here you can define your properties.
       // https://github.com/vuejs/vue-router/issues/1863#issuecomment-391744471
@@ -45,9 +46,12 @@ export default class Home extends Vue {
     // called when the route that renders this component is about to
     // be navigated away from.
     // has access to `this` component instance.
-    console.log("going from: ", from.name);
-    console.log("going to: ", to.name);
-    console.log("path: ", to.path);
+    // tslint:disable-next-line:no-console
+    console.log('going from: ', from.name);
+    // tslint:disable-next-line:no-console
+    console.log('going to: ', to.name);
+    // tslint:disable-next-line:no-console
+    console.log('path: ', to.path);
     next(vm => {
       // vm.providerMovies = []; /// <= Here you can define your properties.
       // https://github.com/vuejs/vue-router/issues/1863#issuecomment-391744471

@@ -46,7 +46,12 @@ npm run test:unit
 
 ### Customize configuration
 
+[vue-cli-plugin-electron-builder guide](https://github.com/nklayman/vue-cli-plugin-electron-builder/blob/master/docs/guide/guide.md)
+
 [Advanced Webpack configuration of VCP electron-builder](https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/configuration.html#webpack-configuration)
+
+[WebPack Config / vue.config.js](https://cli.vuejs.org/guide/webpack.html#modifying-options-of-a-plugin):
+`vue inspect > webpack.config.preview.js`
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
