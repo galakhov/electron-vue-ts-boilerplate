@@ -34,6 +34,7 @@ const createWindow = (
     height: 800,
     useContentSize: true,
     titleBarStyle: 'hiddenInset',
+    fullscreenWindowTitle: true,
     show: false,
     frame: false,
     fullscreenable: false,

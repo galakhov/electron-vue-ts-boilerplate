@@ -30,7 +30,7 @@
           <v-tab-item v-for="item in items" :key="item">
             <v-card flat>
               <v-card-text>
-                {{ text }}
+                <v-card-text v-html="text"></v-card-text>
                 <v-spacer></v-spacer>
 
                 <v-btn
@@ -58,7 +58,8 @@
 
 <script lang="ts">
 import * as fs from 'fs';
-import { remote } from 'electron';
+import path from 'path';
+import { app, remote } from 'electron';
 // import path from 'path';
 
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
@@ -72,10 +73,11 @@ import SystemInformation from './LandingPage/SystemInformation.vue';
 export default class LandingPage extends Vue {
   loading3: boolean = false;
   tab = null;
-  loader = '';
-  items = ['web', 'shopping', 'videos', 'images', 'news'];
-  text =
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
+  loader: string = '';
+  items: string[] = ['web', 'shopping', 'videos', 'images', 'news'];
+  text: string = 'Click the upload button and choose a html file to parse.';
+  filePath: string = '';
+  originalContent: string = '';
 
   @Watch('loader')
   loaderHandler() {
@@ -106,6 +108,26 @@ export default class LandingPage extends Vue {
     this.readFile(file);
   }
 
+  updateUserInterface(/* isEdited */) {
+    let title = 'Bookmarks Analyser';
+
+    if (this.filePath) {
+      title = `${path.basename(this.filePath || '')} - ${title}`;
+    }
+    // if (isEdited) {
+    //   title = `${title} (Edited)`;
+    // }
+
+    const currentWindow = remote.getCurrentWindow();
+    currentWindow.setTitle(title);
+    // currentWindow.setDocumentEdited(isEdited); // MacOSX specific dot on unsaved doc
+    // currentWindow.setRepresentedFilename(this.filePath);
+
+    // disable some buttons if needed
+    // saveMarkdownButton.disabled = !isEdited;
+    // revertButton.disabled = !isEdited;
+  }
+
   prepareText(s: string): string {
     // preserve newlines, etc - use valid JSON
     s = s
@@ -122,15 +144,35 @@ export default class LandingPage extends Vue {
     return s;
   }
 
-  readFile(file: string) {
-    const content = fs.readFileSync(file); //.toString();
+  text2HTML(textSequence: string) {
+    // 1: Plain Text Search
+    let text = textSequence
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    // 2: Line Breaks
+    text = text.replace(/\r\n?|\n/g, '<br>');
+    // 3: Paragraphs
+    text = text.replace(/<br>\s*<br>/g, '</p><p>');
+    // 4: Wrap in Paragraph Tags
+    text = '<p>' + text + '</p>';
+    return text;
+  }
 
+  readFile(file: string) {
+    const content = fs.readFileSync(file);
+    app.addRecentDocument(file); // to add file to the app’s ‘history‘
     // tslint:disable-next-line:no-console
     // console.log(content);
-    // if (fileFype === 'text') .text()
-    // const sanitizedText = this.prepareText(content.toString());
-    const sanitizedText = content.toString();
-    this.text = JSON.stringify(sanitizedText);
+    const currentWindow = remote.getCurrentWindow();
+    // const cleanText = this.prepareText(content.toString());
+    const text2html = this.text2HTML(content.toString());
+    this.filePath = file;
+    if (content) {
+      this.originalContent = content.toString();
+    }
+    this.updateUserInterface();
+    this.text = text2html; // JSON.stringify(cleanText);
   }
 
   /* Event Listener */
