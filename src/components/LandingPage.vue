@@ -31,6 +31,8 @@
             <v-card flat>
               <v-card-text>
                 {{ text }}
+                <v-spacer></v-spacer>
+
                 <v-btn
                   :loading="loading3"
                   :disabled="loading3"
@@ -101,11 +103,42 @@ export default class LandingPage extends Vue {
 
     const file = files[0];
 
-    const content = fs.readFileSync(file).toString();
+    this.readFile(file);
+  }
+
+  prepareText(s: string): string {
+    // preserve newlines, etc - use valid JSON
+    s = s
+      .replace(/\\n/g, '\\n')
+      .replace(/\\'/g, "\\'")
+      .replace(/\\"/g, '\\"')
+      .replace(/\\&/g, '\\&')
+      .replace(/\\r/g, '\\r')
+      .replace(/\\t/g, '\\t')
+      .replace(/\\b/g, '\\b')
+      .replace(/\\f/g, '\\f');
+    // remove non-printable and other non-valid JSON chars
+    s = s.replace(/[\u0000-\u0019]+/g, '');
+    return s;
+  }
+
+  readFile(file: string) {
+    const content = fs.readFileSync(file); //.toString();
 
     // tslint:disable-next-line:no-console
-    console.log(content);
+    // console.log(content);
+    // if (fileFype === 'text') .text()
+    // const sanitizedText = this.prepareText(content.toString());
+    const sanitizedText = content.toString();
+    this.text = JSON.stringify(sanitizedText);
   }
+
+  /* Event Listener */
+  // const { remote, ipcRenderer } = require('electron');
+  // ipcRenderer.on('file-opened', (event, file, content) => {
+  //   someField.value = content;
+  //   someFunction(content);
+  // });
 
   open(link: string) {
     remote.shell.openExternal(link); // to open something in a browser
