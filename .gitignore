@@ -11,4 +11,4 @@ thumbs.db
 !.gitkeep
 
 #Electron-builder output
-/dist_electron
+dist_electron/*

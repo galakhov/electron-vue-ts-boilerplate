@@ -1209,7 +1209,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nconst 
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = __webpack_require__(/*! /Users/dima/Documents/Electron-Servers-FP/bookmarks-analyzer-electron/src/background.ts */\"./src/background.ts\");\n\n\n//# sourceURL=webpack:///multi_./src/background.ts?");
+eval("module.exports = __webpack_require__(/*! /Users/Teilnehmer/Projects/bookmarks-analyser-electron/src/background.ts */\"./src/background.ts\");\n\n\n//# sourceURL=webpack:///multi_./src/background.ts?");
 
 /***/ }),
 
