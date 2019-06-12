@@ -1,4 +1,4 @@
-# bookmarks-analyser-electron
+# electron-vue-ts-boilerplate
 
 ## Project setup
 
