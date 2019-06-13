@@ -61,9 +61,12 @@ import * as fs from 'fs';
 import path from 'path';
 import { app, remote } from 'electron';
 // import path from 'path';
+import util, { log } from 'util';
 
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import SystemInformation from './LandingPage/SystemInformation.vue';
+
+const readFilePromisified = util.promisify(fs.readFile);
 
 @Component({
   components: {
@@ -105,7 +108,8 @@ export default class LandingPage extends Vue {
 
     const file = files[0];
 
-    this.readFile(file);
+    // this.readSimpleFile(file);
+    this.readFileAsync(file);
   }
 
   updateUserInterface(/* isEdited */) {
@@ -144,6 +148,7 @@ export default class LandingPage extends Vue {
     return s;
   }
 
+  // https://github.com/gbourne1/text2HTML
   text2HTML(textSequence: string) {
     // 1: Plain Text Search
     let text = textSequence
@@ -159,20 +164,51 @@ export default class LandingPage extends Vue {
     return text;
   }
 
-  readFile(file: string) {
-    const content = fs.readFileSync(file);
-    app.addRecentDocument(file); // to add file to the app’s ‘history‘
-    // tslint:disable-next-line:no-console
-    // console.log(content);
+  // reads a simple (text or html) file asynchronously, to not to block the Event Loop
+  // readSimpleFile(file: string) {
+  //   fs.readFile(file, { encoding: 'utf8' }, (err, fileContent) => {
+  //     if (err) {
+  //       return console.error(err); // If an error occurred, output it and return
+  //     } else {
+  //       this.filePath = file;
+  //       this.processFile(fileContent); // No error occurred, content is a string
+  //     }
+  //   });
+  // }
+
+  async readFileAsync(file: string) {
+    try {
+      console.log('getting file name: ', console);
+      const content = await readFilePromisified(file, 'utf8');
+      this.processFile(content);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  processFile(content: string) {
+    // app.addRecentDocument(file); // to add file to the app’s ‘history‘
+    console.log('content: ', content);
+
     const currentWindow = remote.getCurrentWindow();
     // const cleanText = this.prepareText(content.toString());
-    const text2html = this.text2HTML(content.toString());
-    this.filePath = file;
+    let text2html = '';
+    // convert text special chars to html
+    if (this.filePath.split('.')[1] === 'txt') {
+      text2html = this.text2HTML(content.toString());
+    } else {
+      text2html = content.toString();
+    }
     if (content) {
       this.originalContent = content.toString();
     }
     this.updateUserInterface();
-    this.text = text2html; // JSON.stringify(cleanText);
+    this.text = text2html;
+  }
+
+  saveAsJSON(content: string) {
+    // To save parsed content as a JSON file
+    // JSON.stringify(cleanText);
   }
 
   /* Event Listener */
