@@ -198,6 +198,20 @@ export default class LandingPage extends Vue {
     });
   }
 
+  readFileWithPromise(filePath: string) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(filePath, 'utf8', (err, content) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(content);
+        this.filePath = filePath;
+        this.processFile(content); // No error occurred, content is a string
+      });
+    });
+  }
+
   // async readFileAsync(file: string) {
   //   try {
   //     console.log('getting file name: ', console);
