@@ -61,12 +61,12 @@ import * as fs from 'fs';
 import path from 'path';
 import { app, remote } from 'electron';
 // import path from 'path';
-import util, { log } from 'util';
+// import util, { log } from 'util';
 
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import SystemInformation from './LandingPage/SystemInformation.vue';
 
-const readFilePromisified = util.promisify(fs.readFile);
+// const readFilePromisified = util.promisify(fs.readFile);
 
 @Component({
   components: {
@@ -109,7 +109,17 @@ export default class LandingPage extends Vue {
     const file = files[0];
 
     // this.readSimpleFile(file);
-    this.readFileAsync(file);
+    // this.readFileAsync(file);
+
+    this.readFilePromise(file)
+      .then((content: string) => {
+        console.log(content);
+        this.processFile(content);
+      })
+      .catch((err: string) => {
+        console.error('An error occurred.');
+        console.error(err);
+      });
   }
 
   updateUserInterface(/* isEdited */) {
@@ -164,27 +174,39 @@ export default class LandingPage extends Vue {
     return text;
   }
 
-  // reads a simple (text or html) file asynchronously, to not to block the Event Loop
   // readSimpleFile(file: string) {
-  //   fs.readFile(file, { encoding: 'utf8' }, (err, fileContent) => {
-  //     if (err) {
-  //       return console.error(err); // If an error occurred, output it and return
-  //     } else {
-  //       this.filePath = file;
-  //       this.processFile(fileContent); // No error occurred, content is a string
-  //     }
-  //   });
+  // fs.readFile(file, { encoding: 'utf8' }, (err, fileContent) => {
+  //   if (err) {
+  //     return console.error(err); // If an error occurred, output it and return
+  //   } else {
+  //     this.filePath = file;
+  //     this.processFile(fileContent); // No error occurred, content is a string
+  //   }
+  // });
   // }
 
-  async readFileAsync(file: string) {
-    try {
-      console.log('getting file name: ', console);
-      const content = await readFilePromisified(file, 'utf8');
-      this.processFile(content);
-    } catch (e) {
-      console.error(e);
-    }
+  // reads a simple (text or html) file asynchronously, to not to block the Event Loop
+  readFilePromise(file: string): any {
+    // still a sync method?
+    fs.readFile(file, { encoding: 'utf8' }, (err, fileContent) => {
+      if (err) {
+        return console.error(err); // If an error occurred, output it and return
+      } else {
+        this.filePath = file;
+        this.processFile(fileContent); // No error occurred, content is a string
+      }
+    });
   }
+
+  // async readFileAsync(file: string) {
+  //   try {
+  //     console.log('getting file name: ', console);
+  //     const content = await readFilePromisified(file, 'utf8');
+  //     this.processFile(content);
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // }
 
   processFile(content: string) {
     // app.addRecentDocument(file); // to add file to the app’s ‘history‘
