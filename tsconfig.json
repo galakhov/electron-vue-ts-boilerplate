@@ -24,7 +24,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx",
+    "src/decorators/catchDecorator.js"
   ],
   "exclude": ["node_modules"]
 }

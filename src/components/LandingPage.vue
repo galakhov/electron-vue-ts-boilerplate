@@ -30,7 +30,7 @@
           <v-tab-item v-for="item in items" :key="item">
             <v-card flat>
               <v-card-text>
-                <v-card-text v-html="text"></v-card-text>
+                <v-card-text v-html="text" :key="keyComp"></v-card-text>
                 <v-spacer></v-spacer>
 
                 <v-btn
@@ -57,15 +57,13 @@
 </template>
 
 <script lang="ts">
-import * as fs from 'fs';
 import path from 'path';
-import { app, remote } from 'electron';
-// import path from 'path';
-// import util, { log } from 'util';
+import { remote } from 'electron';
+import { log } from 'util';
 
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+import { Vue, Component, Emit, Prop, Watch } from 'vue-property-decorator';
 import SystemInformation from './LandingPage/SystemInformation.vue';
-
+import { requestsService } from '@/components/AsyncRequests/RequestsService';
 // const readFilePromisified = util.promisify(fs.readFile);
 
 @Component({
@@ -78,9 +76,11 @@ export default class LandingPage extends Vue {
   tab = null;
   loader: string = '';
   items: string[] = ['web', 'shopping', 'videos', 'images', 'news'];
-  text: string = 'Click the upload button and choose a html file to parse.';
+  text: string | undefined =
+    'Click the upload button and choose a html file to parse.';
   filePath: string = '';
-  originalContent: string = '';
+  originalContent: string | undefined = '';
+  keyComp: number = 0;
 
   @Watch('loader')
   loaderHandler() {
@@ -91,6 +91,11 @@ export default class LandingPage extends Vue {
     this.loader = '';
   }
 
+  created() {
+    requestsService.initialize();
+  }
+
+  // @Watch('originalContent')
   getFilesInFolders() {
     const files = remote.dialog.showOpenDialog({
       properties: ['openFile', 'multiSelections'],
@@ -108,21 +113,44 @@ export default class LandingPage extends Vue {
 
     const file = files[0];
 
-    // this.readSimpleFile(file);
-    // this.readFileAsync(file);
+    this.filePath = file;
 
-    this.readFilePromise(file)
-      .then((content: string) => {
-        console.log(content);
-        this.processFile(content);
-      })
-      .catch((err: string) => {
-        console.error('An error occurred.');
-        console.error(err);
-      });
+    // this.readSimpleFile(file);
+
+    // this.readFilePromise(file)
+    //   .then((content: string) => {
+    //     console.log(content);
+    //     this.processFile(content);
+    //   })
+    //   .catch((err: string) => {
+    //     console.error('An error occurred.');
+    //     console.error(err);
+    //   });
+
+    // this.readFileAsync(file);
+    // this.openAndRead(file).then(result => this.processFile(result));
+    console.log('File name', file);
+    console.log("The file wasn't processed.", this.text);
+    // try {
+    // this.originalContent = requestsService.openAndRead(file);
+    // } catch (err) {
+    // console.log(err.message);
+    // }
+    // this.$emit('update:content', this.originalContent)
+    let temp = requestsService.openAndRead(file);
+    this.$nextTick(() => {
+      // this.text = this.originalContent;
+
+      // this.text = temp;
+      console.log('The file was processed.', temp);
+      this.keyComp += 1; // dirty hack: https://michaelnthiessen.com/force-re-render
+      this.text = String(temp);
+    });
+    this.updateUserInterface();
   }
 
-  updateUserInterface(/* isEdited */) {
+  /* args: isEdited */
+  updateUserInterface() {
     let title = 'Bookmarks Analyser';
 
     if (this.filePath) {
@@ -174,68 +202,45 @@ export default class LandingPage extends Vue {
     return text;
   }
 
-  // readSimpleFile(file: string) {
-  // fs.readFile(file, { encoding: 'utf8' }, (err, fileContent) => {
-  //   if (err) {
-  //     return console.error(err); // If an error occurred, output it and return
-  //   } else {
-  //     this.filePath = file;
-  //     this.processFile(fileContent); // No error occurred, content is a string
-  //   }
-  // });
+  // writeFile(path: string, data: string, opts = 'utf8') {
+  //   new Promise((resolve, reject) => {
+  //     fs.writeFile(path, data, opts, err => {
+  //       if (err) reject(err);
+  //       else resolve();
+  //     });
+  //   });
   // }
 
-  // reads a simple (text or html) file asynchronously, to not to block the Event Loop
-  readFilePromise(file: string): any {
-    // still a sync method?
-    fs.readFile(file, { encoding: 'utf8' }, (err, fileContent) => {
-      if (err) {
-        return console.error(err); // If an error occurred, output it and return
-      } else {
-        this.filePath = file;
-        this.processFile(fileContent); // No error occurred, content is a string
-      }
-    });
-  }
-
-  readFileWithPromise(filePath: string) {
-    return new Promise((resolve, reject) => {
-      fs.readFile(filePath, 'utf8', (err, content) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(content);
-        this.filePath = filePath;
-        this.processFile(content); // No error occurred, content is a string
-      });
-    });
-  }
-
-  // async readFileAsync(file: string) {
+  // async readFileAsync(filePath: string) {
   //   try {
-  //     console.log('getting file name: ', console);
-  //     const content = await readFilePromisified(file, 'utf8');
-  //     this.processFile(content);
-  //   } catch (e) {
-  //     console.error(e);
+  //     // let textFileContent = await readFilePromise("input-file.csv");
+  //     // let deserialiedData = parseCsv(textFileContent);
+  //     // let transformedData = transform(deserialiedData);
+  //     // let serializedCsvData = serializeCsv(transformedData);
+  //     // await writeFilePromise("output-file.csv", serializedCsvData);
+  //     const textFileContent = await this.readFile(filePath);
+  //     console.log('returned textFileContent result: ', textFileContent);
+  //     // this.processFile(textFileContent);
+  //     throw new Error('Something bad happened');
+  //   } catch (err) {
+  //     console.error(err);
   //   }
   // }
-
-  processFile(content: string) {
+  processFile(content: Buffer | undefined) {
     // app.addRecentDocument(file); // to add file to the app’s ‘history‘
-    console.log('content: ', content);
-
-    const currentWindow = remote.getCurrentWindow();
-    // const cleanText = this.prepareText(content.toString());
-    let text2html = '';
-    // convert text special chars to html
-    if (this.filePath.split('.')[1] === 'txt') {
-      text2html = this.text2HTML(content.toString());
-    } else {
-      text2html = content.toString();
-    }
+    let text2html = 'No content loaded.';
     if (content) {
+      console.log('content: ', content);
+
+      const currentWindow = remote.getCurrentWindow();
+      // const cleanText = this.prepareText(content.toString());
+      // convert text special chars to html
+      if (this.filePath.split('.')[1] === 'txt') {
+        text2html = this.text2HTML(content.toString());
+      } else {
+        text2html = content.toString();
+      }
+
       this.originalContent = content.toString();
     }
     this.updateUserInterface();
