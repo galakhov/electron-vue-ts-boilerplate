@@ -92,7 +92,7 @@ export default class LandingPage extends Vue {
   }
 
   created() {
-    requestsService.initialize();
+    // requestsService.initialize();
   }
 
   // @Watch('originalContent')
@@ -115,37 +115,32 @@ export default class LandingPage extends Vue {
 
     this.filePath = file;
 
-    // this.readSimpleFile(file);
-
-    // this.readFilePromise(file)
-    //   .then((content: string) => {
-    //     console.log(content);
-    //     this.processFile(content);
-    //   })
-    //   .catch((err: string) => {
-    //     console.error('An error occurred.');
-    //     console.error(err);
-    //   });
-
-    // this.readFileAsync(file);
-    // this.openAndRead(file).then(result => this.processFile(result));
     console.log('File name', file);
     console.log("The file wasn't processed.", this.text);
-    // try {
-    // this.originalContent = requestsService.openAndRead(file);
-    // } catch (err) {
-    // console.log(err.message);
-    // }
-    // this.$emit('update:content', this.originalContent)
-    let temp = requestsService.openAndRead(file);
-    this.$nextTick(() => {
-      // this.text = this.originalContent;
 
-      // this.text = temp;
-      console.log('The file was processed.', temp);
-      this.keyComp += 1; // dirty hack: https://michaelnthiessen.com/force-re-render
-      this.text = String(temp);
-    });
+    try {
+      // filehandle = await this.fsPromises.open(filePath, 'r');
+      requestsService.readFileInAsyncWay(file).then(content => {
+        if (content !== undefined) {
+          this.originalContent = content;
+          console.log('where is it?!', content);
+        } else {
+          this.originalContent = 'No content could be read.';
+        }
+        console.log('The file was processed.', content);
+        let text2html;
+        if (this.filePath.split('.')[1] === 'txt') {
+          text2html = this.text2HTML(content);
+        } else {
+          text2html = content;
+        }
+
+        this.text = text2html; // this.originalContent;
+      });
+    } catch (err) {
+      console.error(err.message);
+    }
+
     this.updateUserInterface();
   }
 
