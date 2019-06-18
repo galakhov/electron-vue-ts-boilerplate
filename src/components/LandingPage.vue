@@ -63,7 +63,7 @@ import { log } from 'util';
 
 import { Vue, Component, Emit, Prop, Watch } from 'vue-property-decorator';
 import SystemInformation from './LandingPage/SystemInformation.vue';
-import { requestsService } from '@/components/AsyncRequests/RequestsService';
+import { requestsService } from '@/services/AsyncRequests/RequestsService';
 // const readFilePromisified = util.promisify(fs.readFile);
 
 @Component({
