@@ -20,12 +20,15 @@
   "dependencies": {
     "@babel/polyfill": "^7.0.0-rc.1",
     "@fortawesome/fontawesome-free": "^5.2.0",
+    "@uppy/core": "^1.1.0",
+    "@uppy/dashboard": "^1.1.0",
+    "@uppy/webcam": "^1.1.0",
     "core-js": "^2.6.5",
     "roboto-fontface": "*",
     "ts-loader": "^6.0.2",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
-    "vue-property-decorator": "^8.1.0",
+    "vue-property-decorator": "^8.2.1",
     "vue-router": "^3.0.3",
     "vuetify": "^1.5.5",
     "vuex": "^3.0.1"

@@ -47,6 +47,13 @@
                 <v-btn @click="open('http://google.com')">Open URL</v-btn>
 
                 <system-information></system-information>
+
+                <!--<v-c-uploader v-model="text" upload-preset="tm4w6luq" cloud-name="rootless"></v-c-uploader>-->
+                <uppy-cloudinary-uploader
+                  @uploaded="uploadCompleted"
+                  preset="tm4w6luq"
+                  cloudName="rootless"
+                ></uppy-cloudinary-uploader>
               </v-card-text>
             </v-card>
           </v-tab-item>
@@ -64,11 +71,14 @@ import { log } from 'util';
 import { Vue, Component, Emit, Prop, Watch } from 'vue-property-decorator';
 import SystemInformation from './LandingPage/SystemInformation.vue';
 import { requestsService } from '@/services/AsyncRequests/RequestsService';
-// const readFilePromisified = util.promisify(fs.readFile);
+// import vCUploader from './vCloudinaryUploader/vCUploader.vue';
+import UppyCloudinaryUploader from './Uppy/UppyCloudinaryUploader.vue';
 
 @Component({
   components: {
     SystemInformation,
+    UppyCloudinaryUploader,
+    // vCUploader,
   },
 })
 export default class LandingPage extends Vue {
@@ -163,6 +173,10 @@ export default class LandingPage extends Vue {
     // disable some buttons if needed
     // saveMarkdownButton.disabled = !isEdited;
     // revertButton.disabled = !isEdited;
+  }
+
+  uploadCompleted(data: string) {
+    console.log(data);
   }
 
   prepareText(s: string): string {
