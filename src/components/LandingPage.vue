@@ -21,13 +21,13 @@
             <v-tabs v-model="tab" color="orange" grow>
               <v-tabs-slider color="black"></v-tabs-slider>
 
-              <v-tab v-for="item in items" :key="item">{{ item }}</v-tab>
+              <v-tab v-for="item in tabs" :key="item">{{ item }}</v-tab>
             </v-tabs>
           </template>
         </v-toolbar>
 
         <v-tabs-items v-model="tab">
-          <v-tab-item v-for="item in items" :key="item">
+          <v-tab-item v-for="item in tabs" :key="item">
             <v-card flat>
               <v-card-text>
                 <v-card-text v-html="text" :key="keyComp"></v-card-text>
@@ -40,13 +40,18 @@
                   class="white--text"
                   @click="getFilesInFolders()"
                 >
-                  Upload
-                  <v-icon right dark>fas fa-cloud-upload-alt</v-icon>
+                  Open File
+                  <v-icon right dark>fas fa-file-alt</v-icon>
                 </v-btn>
 
-                <v-btn @click="open('http://google.com')">Open URL</v-btn>
+                <v-btn @click="open('http://google.com')">
+                  Open URL
+                  <v-icon right dark>fas fa-external-link-square-alt</v-icon>
+                </v-btn>
 
                 <system-information></system-information>
+
+                <bookmarks-view tree="originalContent"></bookmarks-view>
 
                 <!--<v-c-uploader v-model="text" upload-preset="tm4w6luq" cloud-name="rootless"></v-c-uploader>-->
                 <uppy-cloudinary-uploader
@@ -73,19 +78,22 @@ import SystemInformation from './LandingPage/SystemInformation.vue';
 import { requestsService } from '@/services/AsyncRequests/RequestsService';
 // import vCUploader from './vCloudinaryUploader/vCUploader.vue';
 import UppyCloudinaryUploader from './Uppy/UppyCloudinaryUploader.vue';
+//@ts-ignore
+import BookmarksView from './LandingPage/BookmarksView';
+const bookmark = require('netscape-bookmark-tree/dist/bookmark.ast.cjs');
 
 @Component({
   components: {
     SystemInformation,
     UppyCloudinaryUploader,
-    // vCUploader,
+    BookmarksView,
   },
 })
 export default class LandingPage extends Vue {
   loading3: boolean = false;
   tab = null;
   loader: string = '';
-  items: string[] = ['web', 'shopping', 'videos', 'images', 'news'];
+  tabs: string[] = ['web', 'shopping', 'videos', 'images', 'news'];
   text: string | undefined =
     'Click the upload button and choose a html file to parse.';
   filePath: string = '';
@@ -133,11 +141,15 @@ export default class LandingPage extends Vue {
       requestsService.readFileInAsyncWay(file).then(content => {
         if (content !== undefined) {
           this.originalContent = content;
-          console.log('where is it?!', content);
+          // console.log('where is it?!', content);
         } else {
           this.originalContent = 'No content could be read.';
         }
-        console.log('The file was processed.', content);
+        // console.log('The file was processed.', content);
+        // let content = fs.readFileSync('bookmarks.html', 'utf8');
+        const tree = bookmark(this.originalContent);
+        console.log('Parsed bookmarks: ', tree);
+
         let text2html;
         if (this.filePath.split('.')[1] === 'txt') {
           text2html = this.text2HTML(content);

@@ -1,5 +1,8 @@
 <template>
-  <button :class="[buttonStyle]" v-on:click="openUploader()">{{buttonText}}</button>
+  <button :class="[buttonStyle]" v-on:click="openUploader()">
+    {{buttonText}}
+    <v-icon right dark>fas fa-cloud-upload-alt</v-icon>
+  </button>
 </template>
 
 <script>
@@ -166,7 +169,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .uploader {
   text-decoration: none;
   color: #fff;
@@ -176,7 +179,7 @@ export default {
   -webkit-transition: 0.2s ease-out;
   transition: 0.2s ease-out;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.2rem;
   outline: 0;
   border: none;
   border-radius: 2px;
@@ -187,5 +190,9 @@ export default {
   text-transform: uppercase;
   vertical-align: middle;
   -webkit-tap-highlight-color: transparent;
+
+  .fa-cloud-upload-alt {
+    margin-top: 5px;
+  }
 }
 </style>

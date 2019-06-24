@@ -31,29 +31,30 @@ class RequestsService {
     });
   }
 
-  openAndRead(filePath: string) {
-    let textFileContent;
-    try {
-      // filehandle = await this.fsPromises.open(filePath, 'r');
-      this.readFileInAsyncWay(filePath).then(content => {
-        if (content !== undefined) {
-          textFileContent = content;
-          console.log('where is it?!', content);
-        } else {
-          textFileContent = 'No content could be read.';
-        }
-        return textFileContent;
-      });
-    } catch (err) {
-      console.error(err.message);
-    }
-    // finally {
-    //   if (textFileContent !== undefined) {
-    //     // await filehandle.close();
-    //     return textFileContent;
-    //   }
-    // }
-  }
+  // openAndRead(filePath: string) {
+  //   let textFileContent;
+  //   try {
+  //     // filehandle = await this.fsPromises.open(filePath, 'r');
+  //     this.readFileInAsyncWay(filePath).then(content => {
+  //       if (content !== undefined) {
+  //         textFileContent = content;
+  //         // console.log('where is it?!', content);
+  //       } else {
+  //         textFileContent = 'No content could be read.';
+  //       }
+  //       return textFileContent;
+  //     });
+  //   } catch (err) {
+  //     console.error(err.message);
+  //   }
+
+  // finally {
+  //   if (textFileContent !== undefined) {
+  //     // await filehandle.close();
+  //     return textFileContent;
+  //   }
+  // }
+  // }
 }
 
 // Export a singleton instance in the global namespace
