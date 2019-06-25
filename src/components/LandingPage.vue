@@ -51,7 +51,7 @@
 
                 <system-information></system-information>
 
-                <bookmarks-view tree="originalContent"></bookmarks-view>
+                <bookmarks-view :tree="parsedBookmarks"></bookmarks-view>
 
                 <!--<v-c-uploader v-model="text" upload-preset="tm4w6luq" cloud-name="rootless"></v-c-uploader>-->
                 <uppy-cloudinary-uploader
@@ -81,6 +81,7 @@ import UppyCloudinaryUploader from './Uppy/UppyCloudinaryUploader.vue';
 //@ts-ignore
 import BookmarksView from './LandingPage/BookmarksView';
 const bookmark = require('netscape-bookmark-tree/dist/bookmark.ast.cjs');
+import { Bookmark, Folder, Tree } from '@/@types/interfaces';
 
 @Component({
   components: {
@@ -98,6 +99,7 @@ export default class LandingPage extends Vue {
     'Click the upload button and choose a html file to parse.';
   filePath: string = '';
   originalContent: string | undefined = '';
+  parsedBookmarks: Array<Folder | Bookmark> = [];
   keyComp: number = 0;
 
   @Watch('loader')
@@ -141,7 +143,7 @@ export default class LandingPage extends Vue {
       requestsService.readFileInAsyncWay(file).then(content => {
         if (content !== undefined) {
           this.originalContent = content;
-          // console.log('where is it?!', content);
+          // console.log('this.originalContent', this.originalContent);
         } else {
           this.originalContent = 'No content could be read.';
         }
@@ -149,6 +151,7 @@ export default class LandingPage extends Vue {
         // let content = fs.readFileSync('bookmarks.html', 'utf8');
         const tree = bookmark(this.originalContent);
         console.log('Parsed bookmarks: ', tree);
+        this.parsedBookmarks = tree;
 
         let text2html;
         if (this.filePath.split('.')[1] === 'txt') {
