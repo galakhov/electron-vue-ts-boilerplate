@@ -79,7 +79,7 @@ import { requestsService } from '@/services/AsyncRequests/RequestsService';
 // import vCUploader from './vCloudinaryUploader/vCUploader.vue';
 import UppyCloudinaryUploader from './Uppy/UppyCloudinaryUploader.vue';
 //@ts-ignore
-import BookmarksView from './LandingPage/BookmarksView';
+import BookmarksView from './LandingPage/BookmarksView.tsx';
 const bookmark = require('netscape-bookmark-tree/dist/bookmark.ast.cjs');
 import { Bookmark, Folder, Tree } from '@/@types/interfaces';
 

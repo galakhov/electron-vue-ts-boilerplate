@@ -1,9 +1,15 @@
-interface Bookmark extends Array<any> {
+interface Tree extends Array<any> {
   id: string;
-  name: string;
   add_date: string;
-  href: string;
-  icon: string;
+  children: Folder[] | Bookmark[] | SubTree;
+  last_modified: string;
+  name: string;
+  personal_toolbar_folder: boolean;
+}
+
+interface SubTree extends Array<any> {
+  [key: number]: Folder[] | Bookmark[];
+  length: number;
 }
 
 interface Folder extends Array<any> {
@@ -14,52 +20,48 @@ interface Folder extends Array<any> {
   last_modified: string;
 }
 
-interface SubTree extends Array<any> {
-  [key: number]: Folder[] | Bookmark[];
-  length: number;
-}
-
-interface FolderArray extends Array<Folder> {
-  [key: number]: Folder | Bookmark;
-  length: number;
-}
-
-interface Tree extends Array<any> {
+interface Bookmark extends Array<any> {
   id: string;
-  add_date: string;
-  children: Folder[] | Bookmark[] | SubTree;
-  last_modified: string;
   name: string;
-  personal_toolbar_folder: boolean;
+  add_date: string;
+  href: string;
+  icon: string;
 }
 
-function isFolder(f: Folder | Bookmark | Bookmark[] | Folder[]): f is Folder {
-  return (<Folder>f).children.length > 0;
-}
+// interface FolderArray extends Array<Folder> {
+//   [key: number]: Folder | Bookmark;
+//   length: number;
+// }
 
-function isFolders(f: Folder | Tree | SubTree | Folder[]): f is Folder {
-  return (<Folder[]>f).length > 0;
-}
-
-function isBookmark(
-  b: Folder | Bookmark | Folder[] | Bookmark[] | SubTree | Tree
-): b is Bookmark {
-  return (<Bookmark>b).icon !== undefined;
-}
-
-function isTree(t: Tree | Folder[]): t is Tree {
-  return (<Tree>t).personal_toolbar_folder !== undefined;
-}
-
-// Tree | Folder | Bookmark | Folder[] | Bookmark[]
-function isSubTree(t: Tree | Folder[] | SubTree): t is SubTree {
+const isFolder = (
+  f: Folder | Bookmark | Bookmark[] | Folder[]
+): f is Folder => {
   return (
-    (<Bookmark>t).icon === undefined &&
-    (<Folder>t).children === undefined &&
-    (<Tree>t).personal_toolbar_folder === undefined &&
-    (<SubTree>t).length > 0
+    <Folder>f !== undefined &&
+    (<Folder>f).children !== undefined &&
+    (<Folder>f).children.length > 0
   );
-}
+};
+
+const isFolders = (f: Folder | Tree | SubTree | Folder[]): f is Folder => {
+  return (<Folder>f).length > 0;
+};
+
+const isBookmark = (
+  b: Folder | Bookmark | Folder[] | Bookmark[] | SubTree | Tree
+): b is Bookmark => {
+  return <Bookmark>b !== undefined && (<Bookmark>b).icon !== undefined;
+};
+
+const isTree = (t: Tree): t is Tree => {
+  return (
+    <Tree>t !== undefined && (<Tree>t).personal_toolbar_folder !== undefined
+  );
+};
+
+const isSubTree = (t: Tree | SubTree): t is SubTree => {
+  return <SubTree>t !== undefined && (<SubTree>t).length > 0;
+};
 
 export {
   Tree,
