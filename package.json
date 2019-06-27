@@ -6,15 +6,15 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "test": "vue-cli-service test:unit --watch",
     "lint": "vue-cli-service lint",
     "dev": "vue-cli-service electron:serve",
     "electron:build": "vue-cli-service electron:build",
-    "electron:serve": "vue-cli-service electron:serve",
     "electron:debug": "vue-cli-service electron:serve --debug",
+    "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "test:unit": "vue-cli-service test:unit",
-    "test": "vue-cli-service test:unit --watch"
+    "test:unit": "vue-cli-service test:unit"
   },
   "main": "background.js",
   "dependencies": {
@@ -31,6 +31,7 @@
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.2.1",
     "vue-router": "^3.0.3",
+    "vue-tsx-support": "^2.3.0",
     "vuetify": "^1.5.5",
     "vuex": "^3.0.1"
   },
@@ -49,7 +50,9 @@
     "ts-jest": "^23.0.0",
     "typescript": "^3.4.3",
     "vue-cli-plugin-electron-builder": "^1.3.4",
+    "vue-cli-plugin-tsx-support": "^0.4.1",
     "vue-cli-plugin-vuetify": "^0.5.0",
+    "vue-jsx-hot-loader": "^1.4.1",
     "vue-template-compiler": "^2.6.10"
   },
   "repository": {

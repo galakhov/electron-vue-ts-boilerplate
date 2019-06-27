@@ -1,5 +1,7 @@
 import VNode, { CreateElement } from 'vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { BookmarksOutput } from '@/components/BookmarksOutput/BookmarksOutput';
+import { BookmarksFunctionalRender } from '@/components/BookmarksOutput/BookmarksFunctionalRender';
 import {
   Tree,
   SubTree,
@@ -14,7 +16,11 @@ import {
 // original code:
 // https://github.com/kobezhu/netscape-bookmark-tree/blob/master/example/build.js
 
-@Component
+@Component({
+  components: {
+    BookmarksOutput,
+  },
+})
 export default class BookmarksView extends Vue {
   // @Prop(String) fileContent: string | undefined;
   @Prop({ type: Array }) tree!: Tree | SubTree;
@@ -22,6 +28,7 @@ export default class BookmarksView extends Vue {
   data: any;
 
   // A bunch of Vue lifecycle methods here and there...
+
   render(
     // h: any,
     h: CreateElement,
@@ -30,10 +37,7 @@ export default class BookmarksView extends Vue {
     // loaderItem: JSX.Element = <div class='data-loader' loading='' title='Data Loading..'></div>;
     // https://github.com/tejzpr/Vue.TSX/blob/master/src/App.tsx
 
-    function renderList(
-      tree: Folder | Tree | SubTree,
-      data: Folder | Tree | SubTree | undefined
-    ): any {
+    function renderList(tree: Folder | Tree | SubTree, data: any): any {
       // if (!isSubTree(tree) && tree !== undefined && tree.id !== undefined) {
       // console.log('where are we in the tree?', tree);
       // console.log('CONTEXT', context);
@@ -57,10 +61,6 @@ export default class BookmarksView extends Vue {
         console.log('strange edge-case...');
       }
 
-      // if (!isTree(tree) && !isFolders(tree)) {
-      // && tree.children !== undefined
-      // it should be a "Tree"
-      // slots = tree.children;
       slots.map(function(
         node: Tree | SubTree | Folder | Bookmark | Folder[] | Bookmark[]
       ) {
@@ -68,6 +68,8 @@ export default class BookmarksView extends Vue {
         if (!isSubTree(node) && isFolder(node)) {
           subTree = node.children;
         } else if (!isSubTree(node)) {
+          // tslint:disable-next-line
+          // subTree = node.children;
           subTree = node;
         } else {
           subTree = [];
@@ -93,49 +95,72 @@ export default class BookmarksView extends Vue {
         return <li>{liSlots}</li>;
       });
       // }
-      // return h('ol', context, slots);
+      // return h('ol', data, slots);
       return (
-        <slot slot="{ context }">
+        <slot slot={data}>
           {slots.map((value, index) => {
             return (
-              <ol key={index}>
+              <ol key={index} slot={data}>
                 {value}
-                {console.log('WTF', value.name)}
               </ol>
             );
           })}
         </slot>
       );
     }
-    return (
-      <main id="appchen" class="container pt-5">
-        <section id="render" class="my-5">
-          <h3 class="mb-3">Sample rendering</h3>
-          {renderList(this.tree, this.tree)}
-        </section>
-        <section>
-          <h3 class="mb-3">Result</h3>
-          {JSON.stringify(this.tree, null, '    ')}
-        </section>
-        <section>
-          <h3 class="mb-3">Source data</h3>
-          {this.tree}
-        </section>
-      </main>
-    );
+
+    // return h('BookmarksOutput', {
+    //   props: {
+    //     treeRendered: renderList(this.tree, undefined),
+    //     treeJSON: JSON.stringify(this.tree, null, '    '),
+    //   },
+    // });
+
+    const vnodes: VNode[] = renderList(this.tree, this.tree)
+      .children as VNode[];
+
+    // https://github.com/vuejs/jsx#installation
+    // const scopedSlots = {
+    //   header: () => <header>header</header>,
+    //   footer: () => <footer>footer</footer>
+    // }
+    // return (<BookmarksFunctionalRender>
+    //   <div scopedSlots={scopedSlots}>
+    //     <vnodes vnodes={vnodes}/>
+    //   </div>
+    // </BookmarksFunctionalRender>)
+
+    return <BookmarksFunctionalRender nodes={vnodes} />;
+
+    // return (
+    //   <main id="appchen" class="container pt-5">
+    //     <section id="render" class="my-5">
+    //       <h3 class="mb-3">Sample rendering</h3>
+    //       {renderList(this.tree, this.tree)}
+    //     </section>
+    //     <section>
+    //       <h3 class="mb-3">Result</h3>
+    //       {console.log(JSON.stringify(this.tree, null, '    '))}
+    //     </section>
+    //     <section>
+    //       <h3 class="mb-3">Source data</h3>
+    //       {this.tree}
+    //     </section>
+    //   </main>
+    // );
 
     // return h('main', { class: 'container pt-5', attrs: { id: 'app' } }, [
     //   h('section', { attrs: { id: 'render' }, class: 'my-5' }, [
     //     h('h3', { class: 'mb-3' }, 'Sample rendering'),
-    //     renderList(this.tree[0], context),
+    //     renderList(this.tree, undefined),
     //   ]),
     //   h('section', { attrs: { id: 'array' }, class: 'my-5' }, [
     //     h('h3', { class: 'mb-3' }, 'Result'),
-    //     h('pre', JSON.stringify(this.tree, null, '    ')),
+    //     // h('pre', JSON.stringify(this.tree, null, '    ')),
     //   ]),
     //   h('section', { attrs: { id: 'source' }, class: 'my-5' }, [
     //     h('h3', { class: 'mb-3' }, 'Source data'),
-    //     h('pre', this.tree),
+    //     // h('pre', this.tree),
     //   ]),
     // ]);
   }
