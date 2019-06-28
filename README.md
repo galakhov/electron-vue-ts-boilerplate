@@ -1,4 +1,5 @@
 # bookmarks-analyser-electron
+
 Cross-Platform App that imports, analyses and classifies imported Bookmarks. Tech stack: vue-cli-3 + electron (vue-cli-plugin-electron-builder) + TS (vue-property-decorator) + SASS + Vuetify + Router + Vuex
 
 ## Project setup
@@ -44,6 +45,10 @@ npm run lint
 ```
 npm run test:unit
 ```
+
+### JSX support
+
+[JSX for TypeScript](https://github.com/wonderful-panda/vue-tsx-support)
 
 ### Customize configuration
 

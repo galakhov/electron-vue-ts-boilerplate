@@ -1,7 +1,7 @@
 import VNode, { CreateElement } from 'vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { BookmarksOutput } from '@/components/BookmarksOutput/BookmarksOutput';
-import { BookmarksFunctionalRender } from '@/components/BookmarksOutput/BookmarksFunctionalRender';
+import BookmarksFunctionalRender from '@/components/BookmarksOutput/BookmarksFunctionalRender';
 import {
   Tree,
   SubTree,
@@ -116,9 +116,6 @@ export default class BookmarksView extends Vue {
     //   },
     // });
 
-    const vnodes: VNode[] = renderList(this.tree, this.tree)
-      .children as VNode[];
-
     // https://github.com/vuejs/jsx#installation
     // const scopedSlots = {
     //   header: () => <header>header</header>,
@@ -130,7 +127,9 @@ export default class BookmarksView extends Vue {
     //   </div>
     // </BookmarksFunctionalRender>)
 
-    return <BookmarksFunctionalRender nodes={vnodes} />;
+    // https://github.com/wonderful-panda/vue-tsx-support#using-custom-component  --> allow-unknown-props
+    // const vnodes: VNode[] = renderList(this.tree, this.tree).children;
+    // return <BookmarksFunctionalRender nodes={vnodes} />;
 
     // return (
     //   <main id="appchen" class="container pt-5">
@@ -149,19 +148,25 @@ export default class BookmarksView extends Vue {
     //   </main>
     // );
 
-    // return h('main', { class: 'container pt-5', attrs: { id: 'app' } }, [
-    //   h('section', { attrs: { id: 'render' }, class: 'my-5' }, [
-    //     h('h3', { class: 'mb-3' }, 'Sample rendering'),
-    //     renderList(this.tree, undefined),
-    //   ]),
-    //   h('section', { attrs: { id: 'array' }, class: 'my-5' }, [
-    //     h('h3', { class: 'mb-3' }, 'Result'),
-    //     // h('pre', JSON.stringify(this.tree, null, '    ')),
-    //   ]),
-    //   h('section', { attrs: { id: 'source' }, class: 'my-5' }, [
-    //     h('h3', { class: 'mb-3' }, 'Source data'),
-    //     // h('pre', this.tree),
-    //   ]),
-    // ]);
+    return h(
+      'main',
+      { class: 'container pt-5', attrs: { id: 'app' } },
+      [
+        h('section', { attrs: { id: 'render' }, class: 'my-5' }, [
+          h('h3', { class: 'mb-3' }, 'Sample rendering'),
+          renderList(this.tree, undefined),
+        ]),
+        h('section', { attrs: { id: 'array' }, class: 'my-5' }, [
+          h('h3', { class: 'mb-3' }, 'Result'),
+          // h('pre', JSON.stringify(this.tree, null, '    ')),
+        ]),
+        h('section', { attrs: { id: 'source' }, class: 'my-5' }, [
+          h('h3', { class: 'mb-3' }, 'Source data'),
+          // h('pre', this.tree),
+        ]),
+      ],
+      // tslint:disable-next-line:no-console
+      console.log('123', JSON.stringify(this.tree, null, '    '))
+    );
   }
 }
