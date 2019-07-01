@@ -4,7 +4,7 @@
     "module": "commonjs",
     "strict": true,
     "noImplicitAny": true,
-    "jsx": "react",
+    "jsx": "preserve",
     "jsxFactory": "h",
     "importHelpers": true,
     "moduleResolution": "node",

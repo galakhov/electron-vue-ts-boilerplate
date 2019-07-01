@@ -1,5 +1,7 @@
-import VNode, { CreateElement } from 'vue';
+import { CreateElement } from 'vue';
+import { createDecorator } from 'vue-class-component';
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Route } from 'vue-router';
 import { BookmarksOutput } from '@/components/BookmarksOutput/BookmarksOutput';
 import BookmarksFunctionalRender from '@/components/BookmarksOutput/BookmarksFunctionalRender';
 import {
@@ -28,6 +30,46 @@ export default class BookmarksView extends Vue {
   data: any;
 
   // A bunch of Vue lifecycle methods here and there...
+
+  private created() {
+    console.log('The app is created!');
+  }
+
+  // get routedComponent() {
+  // return this.$routes[this.current];
+  // }
+
+  mounted() {
+    // return h('main', { class: 'container pt-5', attrs: { id: 'app' } }, [
+    //   h('section', { attrs: { id: 'render' }, class: 'my-5' }, [
+    //     h('h3', { class: 'mb-3' }, 'Sample rendering'),
+    //     this.renderList(this.tree, undefined),
+    //   ]),
+    //   h('section', { attrs: { id: 'array' }, class: 'my-5' }, [
+    //     h('h3', { class: 'mb-3' }, 'Result'),
+    //     // h('pre', JSON.stringify(this.tree, null, '    ')),
+    //   ]),
+    //   h('section', { attrs: { id: 'source' }, class: 'my-5' }, [
+    //     h('h3', { class: 'mb-3' }, 'Source data'),
+    //     // h('pre', this.tree),
+    //   ]),
+    // ]);
+  }
+
+  static beforeRouteEnter(to: Route, from: Route, next: any) {
+    console.log('Hello: beforeRouteEnter');
+    next();
+  }
+
+  beforeRouteUpdate(to: Route, from: Route, next: any) {
+    console.log('Hello: beforeRouteUpdate');
+    next();
+  }
+
+  beforeRouteLeave(to: Route, from: Route, next: any) {
+    console.log('Hello: beforeRouteLeave');
+    next();
+  }
 
   render(
     // h: any,
@@ -91,22 +133,22 @@ export default class BookmarksView extends Vue {
           }
         }
 
-        // return h('li', liSlots);
-        return <li>{liSlots}</li>;
+        return h('li', {}, liSlots);
+        // return <li>{liSlots}</li>;
       });
       // }
-      // return h('ol', data, slots);
-      return (
-        <slot slot={data}>
-          {slots.map((value, index) => {
-            return (
-              <ol key={index} slot={data}>
-                {value}
-              </ol>
-            );
-          })}
-        </slot>
-      );
+      return h('ol', {}, slots);
+      // return (
+      //   <slot slot={data}>
+      //     {slots.map((value, index) => {
+      //       return (
+      //         <ol key={index} slot={data}>
+      //           {value}
+      //         </ol>
+      //       );
+      //     })}
+      //   </slot>
+      // );
     }
 
     // return h('BookmarksOutput', {
@@ -148,25 +190,7 @@ export default class BookmarksView extends Vue {
     //   </main>
     // );
 
-    return h(
-      'main',
-      { class: 'container pt-5', attrs: { id: 'app' } },
-      [
-        h('section', { attrs: { id: 'render' }, class: 'my-5' }, [
-          h('h3', { class: 'mb-3' }, 'Sample rendering'),
-          renderList(this.tree, undefined),
-        ]),
-        h('section', { attrs: { id: 'array' }, class: 'my-5' }, [
-          h('h3', { class: 'mb-3' }, 'Result'),
-          // h('pre', JSON.stringify(this.tree, null, '    ')),
-        ]),
-        h('section', { attrs: { id: 'source' }, class: 'my-5' }, [
-          h('h3', { class: 'mb-3' }, 'Source data'),
-          // h('pre', this.tree),
-        ]),
-      ],
-      // tslint:disable-next-line:no-console
-      console.log('123', JSON.stringify(this.tree, null, '    '))
-    );
+    // tslint:disable-next-line:no-console
+    console.log('Tree?', this.tree);
   }
 }

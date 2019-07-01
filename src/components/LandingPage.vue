@@ -27,7 +27,7 @@
         </v-toolbar>
 
         <v-tabs-items v-model="tab">
-          <v-tab-item v-for="item in tabs" :key="item">
+          <v-tab-item>
             <v-card flat>
               <v-card-text>
                 <v-card-text v-html="text" :key="keyComp"></v-card-text>
@@ -62,11 +62,32 @@
               </v-card-text>
             </v-card>
           </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>Contents of the 2nd Tab</v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>Contents of the 3rd Tab</v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>Contents of the 4th Tab</v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>Contents of the 5th Tab</v-card-text>
+            </v-card>
+          </v-tab-item>
         </v-tabs-items>
       </v-app>
     </main>
   </div>
 </template>
+
 
 <script lang="ts">
 import path from 'path';
@@ -74,12 +95,11 @@ import { remote } from 'electron';
 import { log } from 'util';
 
 import { Vue, Component, Emit, Prop, Watch } from 'vue-property-decorator';
-import SystemInformation from './LandingPage/SystemInformation.vue';
+import SystemInformation from '@/components/LandingPage/SystemInformation.vue';
+import UppyCloudinaryUploader from '@/components/Uppy/UppyCloudinaryUploader.vue';
 import { requestsService } from '@/services/AsyncRequests/RequestsService';
 // import vCUploader from './vCloudinaryUploader/vCUploader.vue';
-import UppyCloudinaryUploader from './Uppy/UppyCloudinaryUploader.vue';
-//@ts-ignore
-import BookmarksView from './LandingPage/BookmarksView.tsx';
+import BookmarksView from './LandingPage/BookmarksView';
 const bookmark = require('netscape-bookmark-tree/dist/bookmark.ast.cjs');
 import { Bookmark, Folder, Tree } from '@/@types/interfaces';
 
@@ -99,6 +119,7 @@ export default class LandingPage extends Vue {
     'Click the upload button and choose a html file to parse.';
   filePath: string = '';
   originalContent: string | undefined = '';
+  originals: string | undefined = '';
   parsedBookmarks: Array<Folder | Bookmark> = [];
   keyComp: number = 0;
 
@@ -288,74 +309,3 @@ export default class LandingPage extends Vue {
   }
 }
 </script>
-
-<style lang="scss">
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Source Sans Pro', sans-serif;
-}
-
-#wrapper {
-  background: radial-gradient(
-    ellipse at top left,
-    rgba(255, 255, 255, 1) 40%,
-    rgba(229, 229, 229, 0.9) 100%
-  );
-  height: 100vh;
-  padding: 0;
-  width: 100vw;
-}
-
-main {
-  display: flex;
-  justify-content: space-between;
-
-  & > div {
-    flex-basis: 100%;
-  }
-}
-
-.custom-loader {
-  animation: loader 1s infinite;
-  display: flex;
-}
-@-moz-keyframes loader {
-  from {
-    transform: rotate(0);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-@-webkit-keyframes loader {
-  from {
-    transform: rotate(0);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-@-o-keyframes loader {
-  from {
-    transform: rotate(0);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-@keyframes loader {
-  from {
-    transform: rotate(0);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-</style>
