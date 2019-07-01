@@ -88,9 +88,39 @@ body {
 main {
   display: flex;
   justify-content: space-between;
+  text-align: left;
 
   & > div {
     flex-basis: 100%;
+  }
+}
+
+.bookmarks {
+  & ul {
+    border-left: 1px solid #f1f1f1;
+    list-style: none;
+    line-height: 2em;
+  }
+
+  strong {
+    cursor: pointer;
+  }
+
+  &__folder {
+    font-size: 1.2em;
+  }
+
+  &__bookmark {
+    font-size: 1.4em;
+  }
+
+  &__list {
+    & li ul[data-toggle='closed'] {
+      display: none;
+    }
+    & li ul[data-toggle='opened'] {
+      display: block;
+    }
   }
 }
 

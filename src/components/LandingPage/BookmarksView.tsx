@@ -1,9 +1,7 @@
 import { CreateElement } from 'vue';
-import { createDecorator } from 'vue-class-component';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Route } from 'vue-router';
 import { BookmarksOutput } from '@/components/BookmarksOutput/BookmarksOutput';
-import BookmarksFunctionalRender from '@/components/BookmarksOutput/BookmarksFunctionalRender';
 import {
   Tree,
   SubTree,
@@ -17,6 +15,126 @@ import {
 
 // original code:
 // https://github.com/kobezhu/netscape-bookmark-tree/blob/master/example/build.js
+
+const renderList = (
+  tree: Folder | Tree | SubTree,
+  data: any,
+  h: CreateElement
+): any => {
+  // if (!isSubTree(tree) && tree !== undefined && tree.id !== undefined) {
+  // console.log('where are we in the tree?', tree);
+  // console.log('CONTEXT', context);
+  // }
+
+  let slots = new Array();
+  if (
+    !isBookmark(tree) &&
+    !isSubTree(tree) &&
+    !isFolder(tree) &&
+    !isTree(tree)
+  ) {
+    console.log('Nothing was passed...');
+  } else if (
+    isSubTree(tree) ||
+    (!isFolder(tree) && !isBookmark(tree) && isTree(tree))
+  ) {
+    slots = tree;
+  } else if (!isSubTree(tree) || !isFolder(tree)) {
+    if (!isBookmark(tree)) {
+      slots = tree.children;
+    }
+  } else {
+    console.log('strange edge-case...');
+  }
+
+  let parents: any = [];
+  let html: any = [];
+
+  slots.map(function(
+    node: Tree | SubTree | Folder | Bookmark | Folder[] | Bookmark[]
+  ) {
+    let subTree: Folder | Bookmark | Folder[] | Bookmark[];
+    if (!isSubTree(node) && isFolder(node)) {
+      subTree = node.children;
+    } else if (!isSubTree(node)) {
+      // tslint:disable-next-line
+      // subTree = node.children;
+      subTree = node;
+    } else {
+      subTree = [];
+    }
+    const liSlots = [];
+    if (isBookmark(node)) {
+      liSlots.push(
+        h('img', {
+          class: 'mr-2 mt-1 bookmarks__icon',
+          attrs: { src: node.icon, width: 16 },
+        })
+      );
+    }
+
+    if (!isSubTree(node) && isFolder(node) && subTree.length > 0) {
+      liSlots.push(h('strong', { class: 'bookmarks__folder' }, node.name));
+      liSlots.push(renderList(subTree, data, h));
+    } else {
+      if (isBookmark(node)) {
+        liSlots.push(
+          h(
+            'a',
+            { attrs: { href: node.href, class: 'bookmarks__bookmark' } },
+            node.name
+          )
+        );
+      }
+    }
+
+    html.push(h('li', { class: 'bookmarks__line' }, liSlots));
+  });
+
+  if (slots.length > 0 && html.length > 0) {
+    parents.push(
+      h(
+        'ul',
+        {
+          on: {
+            click(event: any) {
+              event.preventDefault();
+              const nextEl = event.target.nextSibling;
+              if (nextEl) {
+                const nextElStatus = nextEl.dataset.toggle;
+                if (nextElStatus === 'closed') {
+                  nextEl.removeAttribute('data-toggle');
+                  nextEl.setAttribute('data-toggle', 'opened');
+                } else {
+                  nextEl.removeAttribute('data-toggle');
+                  nextEl.setAttribute('data-toggle', 'closed');
+                }
+              }
+              event.stopPropagation(); // to touch only current element
+            },
+          },
+          attrs: { 'data-toggle': 'closed' },
+          class: 'bookmarks__list',
+        },
+        html
+      )
+    );
+  }
+
+  return parents;
+
+  // return (
+  //   <slot slot={data}>
+  //     {slots.map((value, index) => {
+  //       return (
+  //         <ol key={index} slot={data}>
+  //           {value}
+  //         </ol>
+  //       );
+  //     })}
+  //   </slot>
+  // );
+};
 
 @Component({
   components: {
@@ -39,39 +157,29 @@ export default class BookmarksView extends Vue {
   // return this.$routes[this.current];
   // }
 
-  mounted() {
-    // return h('main', { class: 'container pt-5', attrs: { id: 'app' } }, [
-    //   h('section', { attrs: { id: 'render' }, class: 'my-5' }, [
-    //     h('h3', { class: 'mb-3' }, 'Sample rendering'),
-    //     this.renderList(this.tree, undefined),
-    //   ]),
-    //   h('section', { attrs: { id: 'array' }, class: 'my-5' }, [
-    //     h('h3', { class: 'mb-3' }, 'Result'),
-    //     // h('pre', JSON.stringify(this.tree, null, '    ')),
-    //   ]),
-    //   h('section', { attrs: { id: 'source' }, class: 'my-5' }, [
-    //     h('h3', { class: 'mb-3' }, 'Source data'),
-    //     // h('pre', this.tree),
-    //   ]),
-    // ]);
+  private mounted() {
+    console.log('The component is mounted!');
+    if (this.tree.length > 0) {
+      console.log('Tree?', this.tree);
+    }
   }
 
-  static beforeRouteEnter(to: Route, from: Route, next: any) {
+  private beforeRouteEnter(to: Route, from: Route, next: any) {
     console.log('Hello: beforeRouteEnter');
     next();
   }
 
-  beforeRouteUpdate(to: Route, from: Route, next: any) {
+  private beforeRouteUpdate(to: Route, from: Route, next: any) {
     console.log('Hello: beforeRouteUpdate');
     next();
   }
 
-  beforeRouteLeave(to: Route, from: Route, next: any) {
+  private beforeRouteLeave(to: Route, from: Route, next: any) {
     console.log('Hello: beforeRouteLeave');
     next();
   }
 
-  render(
+  private render(
     // h: any,
     h: CreateElement,
     data?: Folder | Tree | SubTree | undefined
@@ -79,77 +187,20 @@ export default class BookmarksView extends Vue {
     // loaderItem: JSX.Element = <div class='data-loader' loading='' title='Data Loading..'></div>;
     // https://github.com/tejzpr/Vue.TSX/blob/master/src/App.tsx
 
-    function renderList(tree: Folder | Tree | SubTree, data: any): any {
-      // if (!isSubTree(tree) && tree !== undefined && tree.id !== undefined) {
-      // console.log('where are we in the tree?', tree);
-      // console.log('CONTEXT', context);
-      // }
-
-      let slots = new Array();
-      if (
-        !isBookmark(tree) &&
-        !isSubTree(tree) &&
-        !isFolder(tree) &&
-        !isTree(tree)
-      ) {
-      } else if (
-        isSubTree(tree) ||
-        (!isFolder(tree) && !isBookmark(tree) && isTree(tree))
-      ) {
-        slots = tree;
-      } else if (!isSubTree(tree) || !isFolder(tree)) {
-        if (!isBookmark(tree)) slots = tree.children;
-      } else {
-        console.log('strange edge-case...');
-      }
-
-      slots.map(function(
-        node: Tree | SubTree | Folder | Bookmark | Folder[] | Bookmark[]
-      ) {
-        let subTree: Folder | Bookmark | Folder[] | Bookmark[];
-        if (!isSubTree(node) && isFolder(node)) {
-          subTree = node.children;
-        } else if (!isSubTree(node)) {
-          // tslint:disable-next-line
-          // subTree = node.children;
-          subTree = node;
-        } else {
-          subTree = [];
-        }
-        let liSlots = [];
-        if (isBookmark(node)) {
-          liSlots.push(
-            h('img', { class: 'mr-1', attrs: { src: node.icon, width: 16 } })
-            // return (<img src="{{ node.icon}} " class='mr-1' width='16'>);
-          );
-        }
-
-        if (!isSubTree(node) && isFolder(node) && subTree.length > 0) {
-          liSlots.push(h('strong', node.name));
-          liSlots.push(renderList(subTree, data));
-        } else {
-          if (isBookmark(node)) {
-            liSlots.push(h('a', { attrs: { href: node.href } }, node.name));
-          }
-        }
-
-        return h('li', {}, liSlots);
-        // return <li>{liSlots}</li>;
-      });
-      // }
-      return h('ol', {}, slots);
-      // return (
-      //   <slot slot={data}>
-      //     {slots.map((value, index) => {
-      //       return (
-      //         <ol key={index} slot={data}>
-      //           {value}
-      //         </ol>
-      //       );
-      //     })}
-      //   </slot>
-      // );
-    }
+    return h('main', { class: 'bookmarks container pt-5' }, [
+      h('section', { attrs: { id: 'render' }, class: 'my-5' }, [
+        h('h3', { class: 'mb-3' }, 'Bookmarks Tree'),
+        renderList(this.tree, {}, this.$createElement),
+      ]),
+      // h('section', { attrs: { id: 'array' }, class: 'my-5' }, [
+      //   h('h3', { class: 'mb-3' }, 'Result'),
+      //   // h('pre', JSON.stringify(this.tree, null, '    ')),
+      // ]),
+      // h('section', { attrs: { id: 'source' }, class: 'my-5' }, [
+      //   h('h3', { class: 'mb-3' }, 'Source data'),
+      //   // h('pre', this.tree),
+      // ]),
+    ]);
 
     // return h('BookmarksOutput', {
     //   props: {
@@ -177,7 +228,7 @@ export default class BookmarksView extends Vue {
     //   <main id="appchen" class="container pt-5">
     //     <section id="render" class="my-5">
     //       <h3 class="mb-3">Sample rendering</h3>
-    //       {renderList(this.tree, this.tree)}
+    //       {renderList(this.tree, {}, this.$createElement)}
     //     </section>
     //     <section>
     //       <h3 class="mb-3">Result</h3>
@@ -191,6 +242,5 @@ export default class BookmarksView extends Vue {
     // );
 
     // tslint:disable-next-line:no-console
-    console.log('Tree?', this.tree);
   }
 }

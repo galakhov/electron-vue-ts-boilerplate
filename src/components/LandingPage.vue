@@ -30,7 +30,7 @@
           <v-tab-item>
             <v-card flat>
               <v-card-text>
-                <v-card-text v-html="text" :key="keyComp"></v-card-text>
+                <!-- <v-card-text v-html="text" :key="keyComp"></v-card-text> -->
                 <v-spacer></v-spacer>
 
                 <v-btn
